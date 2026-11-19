@@ -11,14 +11,14 @@ namespace vnr {
         std::string_view name;
         uint32_t size;
         uint32_t offset;
-        Location location;
+        std::source_location location;
         const ReflectedStruct* subStruct = nullptr;
     };
 
     struct ReflectedStruct {
         std::string_view name;
         uint32_t size;
-        Location location;
+        std::source_location location;
         std::span<const ReflectedStructField> fields;
     };
 }

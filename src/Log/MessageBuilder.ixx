@@ -115,7 +115,7 @@ inline MessageBuilderImpl<true>& MessageBuilderImpl<true>::addStruct(const Refle
 }
 
 inline MessageBuilderImpl<true>& MessageBuilderImpl<true>::addStruct(const ReflectedStruct& mainStruct, std::vector<StructTarget> targets) {
-    Snippet snippet{ .location = mainStruct.location.location, .reflectedStruct = &mainStruct };
+    Snippet snippet{ .location = mainStruct.location, .reflectedStruct = &mainStruct };
     for (auto& entry : targets) {
         if (auto* target = std::get_if<Target>(&entry.data)) {
             if (!target->format) {

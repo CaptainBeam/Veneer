@@ -142,7 +142,7 @@ StructTarget StructTarget::insertAfter(const ReflectedStructField& f, std::strin
 
 std::source_location StructTarget::unwrap(const ReflectedStructField& f) {
     if constexpr (CMakeOptions::ENABLE_LOGGING) {
-        return f.location.location;
+        return f.location;
     }
     return {};
 }

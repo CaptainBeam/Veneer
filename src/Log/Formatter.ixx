@@ -325,7 +325,7 @@ ParsedSnippet Formatter::reconstructReflectedStruct(const Snippet& snippet) {
             uint32_t lineEnd   = nameEnd + 1; // include ';'
 
             for (const auto& target : snippet.targets) {
-                if (!sameLocation(target.location, field.location.location)) {
+                if (!sameLocation(target.location, field.location)) {
                     continue;
                 }
                 uint32_t columnStart = typeStart;
@@ -352,7 +352,7 @@ ParsedSnippet Formatter::reconstructReflectedStruct(const Snippet& snippet) {
             }
 
             for (const auto& insertion : snippet.insertions) {
-                if (!sameLocation(insertion.anchorLocation, field.location.location)) {
+                if (!sameLocation(insertion.anchorLocation, field.location)) {
                     continue;
                 }
                 insertions.push_back(ParsedInsertion{
