@@ -1,0 +1,14 @@
+.idea/
+cmake-build-debug/
+cmake-build-documentation/
+cmake-build-release/
+cmake-build-releasenologs/
+cmake-build-relwithdebinfo/
+
+*.exe
+*.dll
+*.lib
+*.obj
+*.pdb
+*.ilk
+*.ifc
