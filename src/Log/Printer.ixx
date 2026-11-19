@@ -1,6 +1,7 @@
 module Veneer:Printer;
 
 import :AnsiFormatting;
+import :UTF8Formatting;
 import :Message;
 import std.compat;
 
@@ -46,15 +47,18 @@ std::string Printer::buildOutput(const Message& message) {
     result += Ansi::bold(std::format(": {}\n", message.title));
 
     uint32_t gutterPosition = calculateGutterPosition(message);
-    auto printGutter = [gutterPosition, &result](uint32_t lineNumber, char gutterChar = '|') {
+    auto printGutter = [gutterPosition, &result](uint32_t lineNumber, std::string_view gutter = UTF8::gutter()) {
         if (lineNumber > 0) {
-            result += Ansi::bold_blue(std::format("{:>{}} {} ", lineNumber, gutterPosition - 1, gutterChar)); // -1 because we want to right-align while leaving a space between the number and the gutter
+            result += Ansi::bold_blue(std::format("{:>{}} ", lineNumber, gutterPosition - 1)); // -1 because we want to right-align while leaving a space between the number and the gutter
+            result += Ansi::blue(std::format("{} ", gutter));
         } else {
-            result += Ansi::bold_blue(std::format("{:>{}}{} ", " ", gutterPosition, gutterChar)); // add 'gutterPosition' spaces before the |
+            result += Ansi::blue(std::format("{:>{}}{} ", " ", gutterPosition, gutter)); // add 'gutterPosition' spaces before the |
         }
     };
 
     for (const auto& line : message.lines) {
+        auto branchChar = (&line == &message.lines.back()) ? UTF8::branch() : UTF8::noteGutter();
+
         switch (line.type) {
             case LineType::Blank:
                 result += line.text + '\n';
@@ -68,23 +72,23 @@ std::string Printer::buildOutput(const Message& message) {
                 result += line.text + '\n';
                 break;
             case LineType::Location:
-                result += Ansi::bold_blue(std::format("{:>{}}--> ", " ", gutterPosition - 1));
+                result += Ansi::blue(std::format("{:>{}}{} ", " ", gutterPosition - 1, UTF8::location()));
                 result += std::format("{}:{}:{}", line.location.file_name(), line.location.line(), line.location.column()) + '\n';
                 break;
             case LineType::Note:
-                printGutter(line.lineNumber, '=');
+                printGutter(line.lineNumber, branchChar);
                 result += Ansi::bold_cyan("note") + ": " + line.text + '\n';
                 break;
             case LineType::Help:
-                printGutter(line.lineNumber, '=');
+                printGutter(line.lineNumber, branchChar);
                 result += Ansi::bold_green("help") + ": " + line.text + '\n';
                 break;
             case LineType::Warn:
-                printGutter(line.lineNumber, '=');
+                printGutter(line.lineNumber, branchChar);
                 result += Ansi::bold_yellow("warn") + ": " + line.text + '\n';
                 break;
             case LineType::Error:
-                printGutter(line.lineNumber, '=');
+                printGutter(line.lineNumber, branchChar);
                 result += Ansi::bold_red("error") + ": " + line.text + '\n';
                 break;
         }

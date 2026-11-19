@@ -9,6 +9,7 @@ namespace vnr {
     class Ansi {
     public:
         Ansi() = delete;
+        static constexpr std::string plain       (std::string_view text) { return std::string(text); }
         static constexpr std::string bold        (std::string_view text) { return wrap(text, "\033[1m"); }
         static constexpr std::string black       (std::string_view text) { return wrap(text, "\033[30m"); }
         static constexpr std::string red         (std::string_view text) { return wrap(text, "\033[31m"); }
@@ -26,6 +27,19 @@ namespace vnr {
         static constexpr std::string bold_magenta(std::string_view text) { return wrap(text, "\033[1;35m"); }
         static constexpr std::string bold_cyan   (std::string_view text) { return wrap(text, "\033[1;36m"); }
         static constexpr std::string bold_white  (std::string_view text) { return wrap(text, "\033[1;37m"); }
+
+        static constexpr AnsiFormat unbold(AnsiFormat fmt) {
+            if (fmt == bold)         return plain;
+            if (fmt == bold_black)   return black;
+            if (fmt == bold_red)     return red;
+            if (fmt == bold_green)   return green;
+            if (fmt == bold_yellow)  return yellow;
+            if (fmt == bold_blue)    return blue;
+            if (fmt == bold_magenta) return magenta;
+            if (fmt == bold_cyan)    return cyan;
+            if (fmt == bold_white)   return white;
+            return fmt ? fmt : plain;
+        }
 
     private:
         // To use ANSI escape codes for formatting strings, we must wrap the string with the

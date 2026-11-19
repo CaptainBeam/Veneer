@@ -2,6 +2,7 @@ module Veneer:Formatter;
 
 import :Message;
 import :AnsiFormatting;
+import :UTF8Formatting;
 import :Snippet;
 import :CppSourceParser;
 import std.compat;
@@ -87,7 +88,7 @@ void Formatter::annotateSourceCode(ParsedSnippet& snippet, std::vector<Line>& re
         const uint32_t lineNumber = snippet.showLineNumbers ? (row + 1) : 0; // 0 is the sentinel "no line number"
         if (targetsOnLine.size() == 1 && targetsOnLine[0]->useArrow) {
             const auto* target = targetsOnLine[0];
-            coloredLine += target->format(std::format(" <-- {}", target->text));
+            coloredLine += Ansi::unbold(target->format)(std::format(" {} ", UTF8::arrowLeft())) + target->format(target->text);
             result.push_back(Line{ .type = LineType::GutterOnly, .lineNumber = lineNumber, .text = std::move(coloredLine) });
         } else {
             result.push_back(Line{ .type = LineType::GutterOnly, .lineNumber = lineNumber, .text = std::move(coloredLine) });
@@ -199,7 +200,7 @@ void Formatter::appendCaretLines(std::vector<const ParsedTarget*> endingTargets,
                 line.append(pendingTargets[i]->caretStart - visualColumn, ' ');
                 visualColumn = pendingTargets[i]->caretStart;
             }
-            line += pendingTargets[i]->format("|");
+            line += Ansi::unbold(pendingTargets[i]->format)(UTF8::gutter());
             visualColumn++;
         }
         return std::pair{ std::move(line), visualColumn };
@@ -215,7 +216,7 @@ void Formatter::appendCaretLines(std::vector<const ParsedTarget*> endingTargets,
         if (target->caretStart > column) {
             line.append(target->caretStart - column, ' ');
         }
-        line += target->format(target->text);
+        line += Ansi::unbold(target->format)(UTF8::branch()) + target->format(" " + target->text);
         result.push_back(Line{ .type = LineType::GutterOnly, .text = std::move(line) });
     }
 }
@@ -231,7 +232,7 @@ void Formatter::appendInsertions(uint32_t row, InsertPosition position, std::str
         }
         std::string line = std::format("{}{}", indent, insertion.format(insertion.code));
         if (!insertion.text.empty()) {
-            line += insertion.format(std::format(" <-- {}", insertion.text));
+            line += Ansi::unbold(insertion.format)(std::format(" {} ", UTF8::arrowLeft()) + insertion.format(insertion.text));
         }
         result.push_back(Line{ .type = LineType::Addition, .text = std::move(line) });
     }

@@ -15,21 +15,26 @@ template<> struct vnr::LogCodes<TestCodes> {
 
 struct TestStruct {
     int x;
-    float y;
-    uint32_t z;
 };
 
 template<typename T, uint32_t N>
 int add(int a, int b, Location loc = {}) {
     auto data = Reflect::typeData<TestStruct>();
 
-    data.location = std::source_location{};
-
     Log::error<TestCodes::Location>("this should point to various things")
         .addStruct(data, {
-            StructTarget::field(data.fields[0], "are we pointing at x?"),
-            StructTarget::insertAbove(data.fields[1], "int beforeY;", "this is a new field!"),
-            StructTarget::insertBelow(data.fields[1], "int afterY;", "this is also a new field!")
+            StructTarget::fieldName(data.fields[0], "are we pointing at x?"),
+            StructTarget::fieldType(data.fields[0], "are we pointing at int?"),
+            StructTarget::insertBefore(data.fields[0], "int beforeX;", "this is a new field!"),
+            StructTarget::insertAfter(data.fields[0], "int afterX;", "this is also a new field!")
+        })
+        .addSnippet(loc, {
+            Target::functionParameter(1, "can we point at 3?"),
+            Target::functionParameter(2, "can we point at 5?"),
+            Target::templateParameter(1, "can we point at int?"),
+            Target::templateParameter(2, "can we point at 3?"),
+            Target::variableName("can we point at sum?"),
+            Target::variableType("can we point at int?"),
         })
         .addNote("did it work?")
         .print();

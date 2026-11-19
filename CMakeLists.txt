@@ -16,6 +16,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -freflection")
 option(VENEER_BUILD_SANDBOX   "Build the main.cpp file used for testing random code" ON) # this should be removed later
 
 option(VENEER_ENABLE_COLORED_LOGS "Color Veneer's output logs using ANSI escape codes (ON by default)" ON)
+option(VENEER_ENABLE_UNICODE_LOGS "Use unicode characters in Veneer's output logs (ON by default)" ON)
 option(VENEER_ENABLE_LOGGING      "Enable Veneer's rich diagnostic system (ON by default)" ON)
 
 # Download and use the CMake Package Manager module
@@ -48,6 +49,7 @@ target_sources(Veneer PUBLIC FILE_SET CXX_MODULES FILES
         src/Log/Location.ixx
         src/Log/CppSourceParser.ixx
         src/Log/Snippet.ixx
+        src/Log/UTF8Formatting.ixx
 
         src/Reflection/ReflectedStruct.ixx
         src/Reflection/Reflection.ixx
@@ -61,6 +63,7 @@ target_include_directories(Veneer PRIVATE
 
 target_compile_definitions(Veneer PRIVATE
         VENEER_ENABLE_COLORED_LOGS=$<BOOL:${VENEER_ENABLE_COLORED_LOGS}>
+        VENEER_ENABLE_UNICODE_LOGS=$<BOOL:${VENEER_ENABLE_UNICODE_LOGS}>
         VENEER_ENABLE_LOGGING=$<BOOL:${VENEER_ENABLE_LOGGING}>
 )
 

@@ -81,8 +81,8 @@ namespace vnr {
         static StructTarget field      (const ReflectedStructField& f, std::string_view text, AnsiFormat format = nullptr);
         static StructTarget fieldType  (const ReflectedStructField& f, std::string_view text, AnsiFormat format = nullptr);
         static StructTarget fieldName  (const ReflectedStructField& f, std::string_view text, AnsiFormat format = nullptr);
-        static StructTarget insertAbove(const ReflectedStructField& f, std::string_view code, std::string_view text = "", AnsiFormat format = Ansi::bold_green);
-        static StructTarget insertBelow(const ReflectedStructField& f, std::string_view code, std::string_view text = "", AnsiFormat format = Ansi::bold_green);
+        static StructTarget insertBefore(const ReflectedStructField& f, std::string_view code, std::string_view text = "", AnsiFormat format = Ansi::bold_green);
+        static StructTarget insertAfter(const ReflectedStructField& f, std::string_view code, std::string_view text = "", AnsiFormat format = Ansi::bold_green);
 
     private:
         static std::source_location unwrap(const ReflectedStructField& f);
@@ -132,11 +132,11 @@ StructTarget StructTarget::fieldName(const ReflectedStructField& f, std::string_
     return makeField(TargetType::VariableName, f, text, format);
 }
 
-StructTarget StructTarget::insertAbove(const ReflectedStructField& f, std::string_view code, std::string_view text, AnsiFormat format) {
+StructTarget StructTarget::insertBefore(const ReflectedStructField& f, std::string_view code, std::string_view text, AnsiFormat format) {
     return makeInsertion(InsertPosition::Before, f, code, text, format);
 }
 
-StructTarget StructTarget::insertBelow(const ReflectedStructField& f, std::string_view code, std::string_view text, AnsiFormat format) {
+StructTarget StructTarget::insertAfter(const ReflectedStructField& f, std::string_view code, std::string_view text, AnsiFormat format) {
     return makeInsertion(InsertPosition::After, f, code, text, format);
 }
 
