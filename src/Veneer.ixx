@@ -1,46 +1,46 @@
 export module Veneer;
 
 export import :Location;
-
 import :Log;
 import :Reflection;
-
 using namespace vnr;
 
-enum class TestCodes { Location };
+enum class TestCodes { Parameters, Structs };
 
 template<> struct vnr::LogCodes<TestCodes> {
     static constexpr std::string_view codePrefix = "TEST";
 };
 
+template<typename T>
+int add(T a, T b, Location loc = {}) {
+    Log::error<TestCodes::Parameters>("we are pointing at both function parameters")
+        .addSnippet(loc, {
+            Target::functionParameter(1, "this is the first one"),
+            Target::functionParameter(2, "and this is the second one"),
+        })
+        .addNote("this system uses tree-sitter to parse source code")
+        .addHelp("this will provide helpful messages to anyone working with Veneer")
+        .print();
+    return a + b;
+}
+
 struct TestStruct {
     int x;
 };
 
-template<typename T, uint32_t N>
-int add(int a, int b, Location loc = {}) {
-    auto data = Reflect::typeData<TestStruct>();
-
-    Log::error<TestCodes::Location>("this should point to various things")
-        .addStruct(data, {
-            StructTarget::fieldName(data.fields[0], "are we pointing at x?"),
-            StructTarget::fieldType(data.fields[0], "are we pointing at int?"),
-            StructTarget::insertBefore(data.fields[0], "int beforeX;", "this is a new field!"),
-            StructTarget::insertAfter(data.fields[0], "int afterX;", "this is also a new field!")
+template<typename T>
+void verifyStruct() {
+    auto structData = Reflect::typeData<T>();
+    Log::warning<TestCodes::Structs>("we are annotating a struct")
+        .addStruct(structData, {
+            StructTarget::field(structData.fields[0], "this is the first field"),
+            StructTarget::insertAfter(structData.fields[0], "float newField;", "this is a brand new field")
         })
-        .addSnippet(loc, {
-            Target::functionParameter(1, "can we point at 3?"),
-            Target::functionParameter(2, "can we point at 5?"),
-            Target::templateParameter(1, "can we point at int?"),
-            Target::templateParameter(2, "can we point at 3?"),
-            Target::variableName("can we point at sum?"),
-            Target::variableType("can we point at int?"),
-        })
-        .addNote("did it work?")
+        .addWarn("this is only possible due to C++26 reflection")
         .print();
-    return (a + b) * N;
 }
 
 export void runTest() {
-    int sum = add<int, 3>(3, 5);
+    int sum = add<int>(3, 5);
+    verifyStruct<TestStruct>();
 }
