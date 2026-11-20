@@ -31,7 +31,17 @@ if(NOT EXISTS "${CPM_DOWNLOAD_LOCATION}")
 endif()
 include(${CMAKE_CURRENT_BINARY_DIR}/cmake/CPM.cmake)
 
-add_subdirectory(lib)
+CPMAddPackage(
+        NAME cpp-tree-sitter
+        GIT_REPOSITORY https://github.com/nsumner/cpp-tree-sitter.git
+        GIT_TAG v0.1.0
+)
+
+add_grammar_from_repo(
+        NAME tree-sitter-cpp
+        REPO https://github.com/tree-sitter/tree-sitter-cpp.git
+        VERSION 0.23.4
+)
 
 add_library(Veneer STATIC)
 add_library(Veneer::Veneer ALIAS Veneer)
@@ -71,9 +81,8 @@ target_link_libraries(Veneer
         PUBLIC
             stdc++exp
         PRIVATE
-            TreeSitter::Core
-            TreeSitter::Cpp
-            TreeSitter::GLSL
+            cts::cpp-tree-sitter
+            tree-sitter-cpp
 )
 
 if(VENEER_BUILD_SANDBOX)

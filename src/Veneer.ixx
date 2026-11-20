@@ -41,6 +41,9 @@ void verifyStruct() {
 }
 
 export void runTest() {
-    int sum = add<int>(3, 5);
+    int sum = add<int>(
+        3,
+        5
+        );
     verifyStruct<TestStruct>();
 }
